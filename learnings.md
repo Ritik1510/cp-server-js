@@ -8,3 +8,5 @@
 - `nodemon` - A package for hot reloading on save for backend practices
 - `dependencies vs devDependencies` - Dependencies is the object where the necessary packages are hold that are going to push to the production environment, on the other hand devDependencies is a object is used for holding those dependencies that are needed while development processes not in production pushes like `nodemon` for hotreloading while working on backend. 
 - `dev` - A script which is going to use to start the `server` through npm with `nodemon`
+- `ls` - A command for list the files in directory 
+- `mkdir <folder name>` - A command for create the folder. 
