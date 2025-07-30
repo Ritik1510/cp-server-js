@@ -1,0 +1,10 @@
+# Key Learnings
+- `npm init` - for initialization 
+- `touch <file name>` - A command for file creation through terminal bash 
+- `.env and .env.sample` - for protecting the secrets and push sample on github
+- `.gitkeep` - for pushing and tracking the empty folders by git on github as project needed
+- `.gitignore generator` - [click here](https://mrkandreev.name/snippets/gitignore-generator/)
+- `A new resume` - [click here](https://mrkandreev.name)
+- `nodemon` - A package for hot reloading on save for backend practices
+- `dependencies vs devDependencies` - Dependencies is the object where the necessary packages are hold that are going to push to the production environment, on the other hand devDependencies is a object is used for holding those dependencies that are needed while development processes not in production pushes like `nodemon` for hotreloading while working on backend. 
+- `dev` - A script which is going to use to start the `server` through npm with `nodemon`
