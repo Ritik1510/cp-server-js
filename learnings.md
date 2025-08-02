@@ -174,3 +174,24 @@
 
 * Finally, set up a **global error handler** middleware in your main `app.js` or `server.js` file to handle all errors thrown using `ApiError` or caught via `asyncHandler`.
 
+---
+- Install packages `bcrypt`, `jsonwebtoken`, `mongoose-aggregate-paginate-v2`. 
+- Use bcrypt, jwt where the encryption needed, for now in User.models.js.
+- Use `pre` hook provided by mongoose/middleware that helps us to perform tasks just before happening something, for now in User.models.js.
+- Use this funciton to check value is modified or not. 
+  ```js
+  this.isModified("password");
+  ```
+- We can also inject own methods over anything using mongoose `methods` hook. and `hash` and `compare` the password as well, like this. 
+  ```js
+  userSchema.pre("save", async function (next) { // function on validation "save", mongoose docs
+    if (!this.isModified("password")) return next();
+    this.password = bcrypt.hash(this.password, 10);
+    next();
+  });
+
+  userSchema.methods.isPasswordCorrect = async function(password){
+      return await bcrypt.compare(password, this.password);
+  }  
+  ```
+- `JsonWebToken` (jwt) is a type of key, like if someone has the jwt key, it is suitable to recieve the data and successfully access the data. 
