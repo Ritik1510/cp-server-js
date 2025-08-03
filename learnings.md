@@ -195,3 +195,8 @@
   }  
   ```
 - `JsonWebToken` (jwt) is a type of key, like if someone has the jwt key, it is suitable to recieve the data and successfully access the data. 
+- `File handling` is not the part of frontend, it is the part of backend. 
+- `Cloudinary` is a cloud-based, API-first platform that provides solutions for managing, transforming, optimizing, and delivering images and videos. It `automates` the entire media lifecycle, from upload and storage to delivery, using AI and automation to enhance user experiences and streamline workflows. Cloudinary offers a wide range of features, including AI-powered transformations, responsive image and video optimization, and a media library for easy management, INSTALL IT .
+- configure the cloudinary in project using the cloudinary docs, same as for `express-fileupload` and `multer`.   
+- `Express.js`, a popular Node.js web framework, does not inherently handle multipart/form-data requests, which are typically used for file uploads. Therefore, external middleware is required to process file uploads in Express. The two most common and widely used solutions for this purpose are `express-fileupload` and `multer`, INSTALL BOTH OF THEM.
+- The Node.js `fs` module, which stands for `File System`, is a built-in core module that provides an API for interacting with the file system on the operating system. It allows Node.js applications to perform various file-related operations like `reading files`, `writing files`, etc. 
