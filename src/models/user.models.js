@@ -50,7 +50,7 @@ const userSchema = new Schema(
 // here is arrow fnc is not allowed bcz, the arrow dont provide `this` keyword to use, and 'async' for process takes time.
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10); // encryption takes time so use `await`
   next();
 });
 
