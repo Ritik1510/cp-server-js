@@ -42,12 +42,13 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "_Avatar image is required_");
   }
   console.log("avatar local path :", avatarLocalPath);
-
+  
   // const coverImageLocalPath = req.files?.coverImage[0]?.path;
-  let coverImageLocalPath; 
-  if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
-    coverImageLocalPath = registerUser.files.coverImage[0].path;
+  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  if (!coverImageLocalPath) {
+    throw new ApiError(400, "_Cover image is required_");
   }
+  console.log("cover image local path :", coverImageLocalPath);
 
   // 5.
   // upload the images to the cloudinary database
@@ -66,7 +67,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     avatar: avatar.url,
-    coverImage: coverImage?.url || "No cover image found", // `?` means, if the coverimage is avilable then save it otherwise store empty string
+    coverImage: coverImage?.url || "_No cover image found_", // `?` means, if the coverimage is avilable then save it otherwise store empty string
   });
 
   // 7. 
