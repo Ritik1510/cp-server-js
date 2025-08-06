@@ -1,6 +1,4 @@
-import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
-
 import { v2 as cloudinary } from "cloudinary";
 
 (async function () {
@@ -28,6 +26,9 @@ const uploadOnCloudinary = async (localFilePath) => {
       " url: ",
       cloudinaryResponse.url
     );
+    fs.unlinkSync(localFilePath); // remove the locally saved temporary file, if uploadation is successful!
+    console.log(cloudinaryResponse);
+    
     return cloudinaryResponse;
     
   } catch (error) {
