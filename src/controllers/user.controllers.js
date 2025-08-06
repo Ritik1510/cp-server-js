@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiResponses } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
@@ -24,7 +24,7 @@ const registerUser = asyncHandler(async (req, res) => {
   ) {
     throw new ApiError(400, "_All field values are required_");
   }
-
+  
   // 2.
   const existedUser = await User.findOne({
     $or: [{ username }, { email }],
@@ -43,11 +43,11 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   console.log("avatar local path :", avatarLocalPath);
 
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
-  if (!coverImageLocalPath) {
-    throw new ApiError(400, "_Cover image is required_");
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  let coverImageLocalPath; 
+  if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
+    coverImageLocalPath = registerUser.files.coverImage[0].path;
   }
-  console.log("cover image local path :", coverImageLocalPath);
 
   // 5.
   // upload the images to the cloudinary database
@@ -61,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // 6.
   // database entry for creation of User object.
   const user = await User.create({
-    username: username.toLowercase(),
+    username: username.toLowerCase(),
     fullName,
     email,
     password,
@@ -83,7 +83,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // send the created user data as response
   res
     .status(201) // status for response
-    .json(new ApiResponse(200, createdUser, "User registered successfully"));
+    .json(new ApiResponses(200, createdUser, "User registered successfully"));
 });
 
 export default registerUser;
