@@ -29,11 +29,10 @@ const registerUser = asyncHandler(async (req, res) => {
   const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
-  console.log("existed user details message :", existedUser);
 
   // 3.
   if (existedUser) {
-    throw new ApiError(409, "User already exist");
+    throw new ApiError(409, "_User already exists with this username or email_");
   }
 
   // 4.
@@ -43,13 +42,11 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   console.log("avatar local path :", avatarLocalPath);
   
-  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
-  if (!coverImageLocalPath) {
-    throw new ApiError(400, "_Cover image is required_");
+  let coverImageLocalPath; 
+  if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
+    coverImageLocalPath = req.files.coverImage[0].path;
   }
-  console.log("cover image local path :", coverImageLocalPath);
-
+  
   // 5.
   // upload the images to the cloudinary database
   const avatar = await uploadOnCloudinary(avatarLocalPath);
