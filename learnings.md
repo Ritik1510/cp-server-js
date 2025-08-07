@@ -97,7 +97,7 @@
     connectDB(); 
 
     ```
-- Mongoose always return `object` as response. 
+- Mongoose always return `objects` as response. 
 - `app.use()` method is only used for middleware configurations and middleware settings. 
 - After setting up the `app.js` file by using express.js then install `cors` and `cookie-parser`, and use it in app.js file. 
 - Set the cors configuration by looking the cors offical npm docs.
@@ -318,6 +318,9 @@ HTTP status codes indicate the result of a request. They are grouped into catego
 ---
 - Write controllers from here 
 - Continue with `routes` and create express routers using `router()` fnc. 
+- req and res in async function both can access the cookies using the `req/res.cookie()` 
+- Both the req and res is objects that are avilable in application environment.
+  
   ```js
   const router = Router();
   router.route("/register").post(
@@ -367,3 +370,45 @@ That’s exactly how **real-world servers** manage temporary uploads. 🔥
 * Try-catch safety for unlinking
 * Async version of `unlink`
 * Or anything else you're curious about
+
+--- 
+- ACCESS TOKEN VS REFRESH TOKEN 
+  - Access tokens and refresh tokens are both used for authentication and authorization in web applications, but they have distinct purposes and lifespans. Access tokens are short-lived tokens that grant access to specific resources, while refresh tokens are long-lived tokens used to obtain new access tokens when the old ones expire, without requiring the user to re-authenticate. 
+  Here's a more detailed breakdown: 
+  
+  ### Access Token: 
+  • Purpose: Grants access to protected resources (e.g., APIs, websites). 
+  • Lifespan: Short, typically lasting from minutes to a few hours. 
+  • Security: Includes security features like signatures to prevent tampering. 
+  • Usage: Sent with each request to access protected resources. 
+  • Example: A user logs in and receives an access token. This token is then used to access their profile information on the website. 
+
+  ### Refresh Token: 
+
+  • Purpose: Used to obtain a new access token when the current one expires.  
+  • Lifespan: Longer than access tokens, potentially lasting days or months. 
+  • Security: Stored securely on the client-side (e.g., in an HTTP-only cookie) and in the backend database. 
+  • Usage: Sent to the server when the access token expires to request a new one.  
+  • Example: When the access token expires, the refresh token is used to get a new access token without requiring the user to log in again. 
+
+  In essence: 
+
+  • Access tokens are like single-use tickets, granting access to a specific event or service for a short duration. 
+  • Refresh tokens are like season passes, allowing you to obtain new tickets without needing to purchase them each time. 
+
+  Key Differences Summarized: 
+
+  | Feature | Access Token | Refresh Token  |
+  | --- | --- | --- |
+  | Purpose | Grant access to resources | Obtain new access tokens  |
+  | Lifespan | Short | Long  |
+  | Storage | Sent with each request, also stored in cookies/localStorage | Stored securely on the client and server  |
+  | Security | Less secure due to short lifespan | More secure due to longer lifespan and secure storage  |
+  | Compromise | Easier to mitigate due to short lifespan | More severe if compromised, but mitigated by rotation and secure storage  |
+
+  Benefits of using both access and refresh tokens: [1]  
+
+  • Improved security: Short-lived access tokens minimize the impact of a compromised token. [8, 22]  
+  • Enhanced user experience: Users don't need to log in repeatedly as refresh tokens handle token renewal. 
+  • Flexibility: Allows for different token lifespans based on security requirements. [8, 14]  
+  • Rotation: Refresh tokens can be rotated (new refresh token issued upon use) to further enhance security. 
