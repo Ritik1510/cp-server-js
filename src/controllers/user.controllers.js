@@ -3,6 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import { ApiResponses } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import jwt from "jsonwebtoken"
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -33,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // 7. remove password and refresh token filed from the the response.
   // 8. check for the user creation
   // 9. return res
-  
+
   // 1.
   const { username, fullName, email, password } = req.body;
   if (
@@ -123,7 +124,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   // 1.
   const { username, email, password } = req.body;
-  if (!username || !email) {
+  if (!username && !email) {
     throw new ApiError(401, "_username or password required!_");
   }
 
@@ -162,7 +163,7 @@ const loginUser = asyncHandler(async (req, res) => {
       new ApiResponses(
         200,
         {
-          loggedInUser,
+          user: loggedInUser,
           accessToken,
           refreshToken,
         },
@@ -202,4 +203,61 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponses(200, null, "User logged out successfully"));
 });
 
-export { registerUser, loginUser, logoutUser, generateAccessAndRefreshTokens };
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  // 1. get the refresh token from the cookies or from request body 
+  // 2. validate the refresh token, is it avilable or not 
+  // 3. verify the token using jwt functions and store it for later usages as decodedToken
+  // 4. find the user with the help of user id, Here, the user id is extracted from the decoded token
+  // 5. validate the user 
+  // 6. match the incoming token with the saved referesh token that is avilable in db already 
+  // 7. generate the new token for user  with the help of user id
+  // 8. send the tokens to the user via cookies and set response to the user 
+
+  // 1.
+  const incommingRefreshtoken = req.cookie.refreshToken || req.body.refreshToken;
+
+   // 2.
+  if (!incommingRefreshtoken) {
+    throw new ApiError(401, "_Invalid token or unable to get the token from cookies while refreshing the token_");
+  }
+  console.log("incomming token: ", incommingRefreshtoken);
+
+  try {
+    // 3.
+    const decodedToken = jwt.verify(incommingRefreshtoken, process.env.REFRESH_TOKEN_SECRET);
+
+    // 4.
+    const user = await User.findById(decodedToken?._id);
+
+    // 5.
+    if (!user) {
+      throw new ApiError(401, "_unauthorized access or invalid request_");
+    }
+
+    // 6.
+    if (incommingRefreshtoken !== user?.refreshToken) {
+      throw new ApiError(401, "_Refresh token mismatch_");
+    }
+
+    // 7.
+    const { newAccessToken, newRefreshToken } = await generateAccessAndRefreshTokens(decodedToken?._id);
+
+    const options = {
+      httpOnly: true,
+      secure: true
+    }
+
+    // 8.
+    res
+      .status(200)
+      .cookie("accessToken", newAccessToken, options)
+      .cookie("refreshToken", newRefreshToken, options)
+      .json(
+        new ApiResponses(200, { accessToken: newAccessToken, refreshToken: newRefreshToken }, "New access and refresh token generated successfully")
+      )
+  } catch (error) {
+
+  }
+})
+
+export { registerUser, loginUser, logoutUser, generateAccessAndRefreshTokens, refreshAccessToken};
