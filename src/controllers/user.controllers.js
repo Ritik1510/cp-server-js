@@ -4,6 +4,25 @@ import { ApiResponses } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
+const generateAccessAndRefreshTokens = async (userId) => {
+  try {
+    const user = await User.findOne(userId);
+    const accessToken = user.generateAccesstoken();
+    const refreshToken = user.generateRefreshtoken();
+
+    // adding the refresh token to the user document that is comming from mongodb
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false }); // bcz whenever we use save method, it automatically trigger the other fields
+
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "_Something went wrong while generating access and refresh token_"
+    );
+  }
+};
+
 const registerUser = asyncHandler(async (req, res) => {
   // 1. get the user data from the frontend
   // 2. validate the user data - not empty
@@ -14,7 +33,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // 7. remove password and refresh token filed from the the response.
   // 8. check for the user creation
   // 9. return res
-
+  
   // 1.
   const { username, fullName, email, password } = req.body;
   if (
@@ -102,25 +121,6 @@ const loginUser = asyncHandler(async (req, res) => {
   // 5. save the accesstoken and refresh token to the db
   // 6. send success flag to the frontend as response [ OR ] send cookies
 
-  const generateAccessAndRefreshTokens = async (userId) => {
-    try {
-      const user = await User.findOne(userId);
-      const accessToken = user.generateAccesstoken();
-      const refreshToken = user.generateRefreshtoken();
-
-      // adding the refresh token to the user document that is comming from mongodb
-      user.refreshToken = refreshToken;
-      await user.save({ validateBeforeSave: false }); // bcz whenever we use save method, it automatically trigger the other fields
-
-      return { accessToken, refreshToken };
-    } catch (error) {
-      throw new ApiError(
-        500,
-        "_Something went wrong while generating access and refresh token_"
-      );
-    }
-  };
-
   // 1.
   const { username, email, password } = req.body;
   if (!username || !email) {
@@ -140,7 +140,7 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "_Invalid user credentials_");
   }
 
-  const { accessToken, refreshToken } = generateAccessAndRefreshTokens(
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id
   ); // pass the user id,
 
@@ -162,7 +162,7 @@ const loginUser = asyncHandler(async (req, res) => {
       new ApiResponses(
         200,
         {
-          user: loggedInUser,
+          loggedInUser,
           accessToken,
           refreshToken,
         },
@@ -172,20 +172,21 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  // first get user object from db by the refrence of req.user._id
-  // set the refresh token to undefined
-  // clear the stored cookies
-  // response to the user
+  // 1. first get user object from db by the refrence of req.user._id
+  // 2. set the refresh token to undefined 
+  // 3. clear the stored cookies
+  // 4. response to the user
 
+  // 1.
   await User.findByIdAndUpdate(
-    req.user._id,
+    req.user._id, // 1.
     {
-      $set: {
+      $set: { // 2.
         refreshToken: undefined,
       },
     },
     {
-      new: true,
+      new: true, // return the updated user object
     }
   );
 
@@ -194,10 +195,11 @@ const logoutUser = asyncHandler(async (req, res) => {
     secure: true,
   };
 
+  // [3, 4]
   res.status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json(new ApiResponses(200, null, "User logged out successfully"));
 });
 
-export { registerUser, loginUser, logoutUser };
+export { registerUser, loginUser, logoutUser, generateAccessAndRefreshTokens };
