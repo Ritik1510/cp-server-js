@@ -16,6 +16,35 @@
 
 ---- 
 
+# Examples and tests about how the express route system works:
+  ```js 
+
+  require('dotenv').config()
+  const express = require('express')
+  const app = express()
+
+  app.get('/', (req, res) => {
+      res.send('Hello World!')
+  })
+
+  app.get('/home', (req, res) => {
+      res.send("I m ritik!");
+  })
+
+  app.get('/youtube', (req, res) => {
+      res.send('<h1>classical emissary: A Bloging service to the world to improve the business culture</h1>')
+  })
+
+  app.get('/instagram', (req, res) => {
+      res.send('<h1>Follow me on instagram: _ritik__k_</h1>')
+  })
+  app.listen(process.env.PORT, () => {
+      console.log(`Example app listening on port`)
+  })
+
+  ```
+----
+
 # Database connections 
 
 * We use `MongoDB Atlas` as our cloud database service.
