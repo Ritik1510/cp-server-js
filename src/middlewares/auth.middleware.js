@@ -1,7 +1,7 @@
-import { asyncHandler } from "../utils/asyncHandler";
-import ApiError from "../utils/ApiError";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import ApiError from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
-import User from "../models/user.models.js";
+import {User} from "../models/user.models.js";
 
 export const verifyJWT = asyncHandler(async (req, _, next) => {
     // 1. getting the token from the cookies or from the header
@@ -18,9 +18,10 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
             req.cookies.accessToken ||
             req.header("Authorization")?.replace("Bearer ", "");
 
+            console.log("Token: ", token);
         // 2.
         if (!token) {
-            throw new ApiError(401, "_Token verification failed_");
+            throw new ApiError(401, "_Token verification failed or not provided_");
         }
 
         // 3.
@@ -28,8 +29,7 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
 
         // 4.
         const user = await User.findById(decodedtoken?._id).select(
-            "-password",
-            "-refreshToken"
+            "-password"
         );
 
         // 5.
