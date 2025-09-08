@@ -14,23 +14,25 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
 
     try {
         // 1.
+        console.log("verification starts...");
         const token =
             req.cookies.accessToken ||
             req.header("Authorization")?.replace("Bearer ", "");
-
-            console.log("Token: ", token);
         // 2.
         if (!token) {
             throw new ApiError(401, "_Token verification failed or not provided_");
         }
-
+        console.log("Token is present...");
+        
         // 3.
         const decodedtoken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        console.log("Token is verified...");
 
         // 4.
         const user = await User.findById(decodedtoken?._id).select(
             "-password"
         );
+        console.log("removing the password from the user object...");
 
         // 5.
         if (!user) {
