@@ -6,6 +6,7 @@ import {
     registerUser,
     refreshAccessToken
 } from "../controllers/user.controllers.js";
+import { createApartment } from "../controllers/apartments.controllers.js";
 
 const router = Router();
 router.route("/register").post(
@@ -18,3 +19,4 @@ router.route("/login").post(loginUser);
 router.route("/logout").post(verifyJWT, logoutUser);
 export default router;
 router.route("/refresh-token").post(refreshAccessToken);
+router.route("/apartments").post(verifyJWT, createApartment);
