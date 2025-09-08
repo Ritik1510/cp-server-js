@@ -2,7 +2,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import { ApiResponses } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken"
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -36,9 +35,9 @@ const registerUser = asyncHandler(async (req, res) => {
   // 9. return res
 
   // 1.
-  const { username, fullName, email, password } = req.body;
+  const { username, fullName, email, password, role } = req.body;
   if (
-    [ username, fullName, email, password ].some((field) => {
+    [ username, fullName, email, password, role ].some((field) => {
       field?.trim() === "";
     })
   ) {
@@ -58,38 +57,13 @@ const registerUser = asyncHandler(async (req, res) => {
     );
   }
 
-  // 4.
-  const avatarLocalPath = req.files?.avatar[ 0 ]?.path;
-  if (!avatarLocalPath) {
-    throw new ApiError(400, "_Avatar image is required_");
-  }
-  console.log("avatar local path :", avatarLocalPath);
-
-  let coverImageLocalPath;
-  if (
-    req.files &&
-    Array.isArray(req.files.coverImage) &&
-    req.files.coverImage.length > 0
-  ) {
-    coverImageLocalPath = req.files.coverImage[ 0 ].path;
-  }
-
-  // 5.
-  const avatar = await uploadOnCloudinary(avatarLocalPath);
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
-
-  if (!avatar) {
-    throw new ApiError(400, "_Avatar file is required_");
-  }
-
   // 6.
   const user = await User.create({
     username: username.toLowerCase(),
     fullName,
     email,
     password,
-    avatar: avatar.url,
-    coverImage: coverImage?.url || "_No cover image found_", // `?` means, if the coverimage is avilable then save it otherwise store empty string
+    role
   });
 
   // 7.
