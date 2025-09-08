@@ -4,44 +4,14 @@ import bcrypt from "bcrypt";
 
 const userSchema = new Schema(
   {
-    watchHistory: [{ type: Schema.Types.ObjectId, ref: "Video" }],
-    username: {
+    username: { type: String, required: true, unique: true },
+    fullName: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: {
       type: String,
-      required: [true, "username is required !!!"],
-      unique: true,
-      lowercase: true,
-      trim: true,
-      index: true, // use when search based task assigned
-    },
-    fullName: {
-      type: String,
+      enum: ["tenant", "manager", "owner", "visitor", "security"],
       required: true,
-      unique: true,
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, "email is required !!!"],
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    password: {
-      type: String,
-      required: [true, "password is required !!!"],
-      unique: true,
-    },
-    avatar: {
-      type: String, // cloudnary url
-      required: true,
-    },
-    coverImage: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    refreshToken: {
-      type: String,
     },
   },
   { timestamps: true }
