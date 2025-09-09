@@ -4,6 +4,10 @@ import { ApiResponses } from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
 
 // Create a new visitor (any authenticated user)
+// get the details from the request body
+// validate the required fields
+// save  the visitor to the database
+// return the created visitor in the response
 export const createVisitor = asyncHandler(async (req, res) => {
   const {
     name,
@@ -39,6 +43,10 @@ export const createVisitor = asyncHandler(async (req, res) => {
 });
 
 // Only manager can delete a visitor
+// validate the user role from req.user
+// get the visitor id from req.params
+// find the visitor by id and delete it from the database
+// return a success message in the response
 export const deleteVisitor = asyncHandler(async (req, res) => {
   if (!req.user || req.user.role !== "manager") {
     throw new ApiError(403, "Only managers are allowed to delete visitors.");
