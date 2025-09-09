@@ -3,8 +3,14 @@ import { Apartment } from "../models/apartment.models.js";
 import { ApiResponses } from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
 
+// Only managers can create apartments
+// validate the user role from req.user
+// get the apartment details from req.body
+// validate the required fields
+// check for duplicate apartment
+// create the apartment in the database
+// return the created apartment in the response
 export const createApartment = asyncHandler(async (req, res) => {
-  // Only managers can create apartments
   if (!req.user || req.user.role !== "manager") {
     throw new ApiError(403, "Only managers are allowed to create apartments.");
   }
