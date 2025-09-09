@@ -79,9 +79,19 @@ const registerUser = asyncHandler(async (req, res) => {
     );
   }
 
+  // option for cookies
+  const options = {
+    httpOnly: true,      // JS cannot access, protects against XSS
+    secure: true,        // Only sent over HTTPS
+    sameSite: 'strict',  // Not sent with cross-site requests (CSRF protection)
+    path: '/',           // Available to entire site
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 1 week, adjust as needed
+  };
   // 9.
   // send the created user data as response
-  res.status(201) // status for response
+  res
+    .cookie("accessToken", accessToken, options)
+    .status(201) // status for response
     .json(
       new ApiResponses(200, createdUser, "User registered successfully")
     );
@@ -190,7 +200,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   // 1.
   const incommingRefreshtoken = req.cookie.refreshToken || req.body.refreshToken;
 
-   // 2.
+  // 2.
   if (!incommingRefreshtoken) {
     throw new ApiError(401, "_Invalid token or unable to get the token from cookies while refreshing the token_");
   }
@@ -234,4 +244,4 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 })
 
-export { registerUser, loginUser, logoutUser, generateAccessAndRefreshTokens, refreshAccessToken};
+export { registerUser, loginUser, logoutUser, generateAccessAndRefreshTokens, refreshAccessToken };
