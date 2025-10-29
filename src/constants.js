@@ -1,1 +1,1 @@
-export const DB_NAME = "cp-server-js";
+export const DB_NAME = "cp-server-user";
