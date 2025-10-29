@@ -24,6 +24,10 @@ app.use(cookieParser());
 
 // routing 
 import userRouter from './routes/user.routes.js';
+import visitorsRouter from './routes/visitors.routes.js';
 
-app.use("/api", userRouter);
+app.use("/api/user", userRouter);
+app.use("/api/visitors", visitorsRouter);
+
+
 export { app };
