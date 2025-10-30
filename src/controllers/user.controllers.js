@@ -20,7 +20,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
       500,
       "_Something went wrong while generating access and refresh token_"
     );
-  }
+  } 
 };
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -28,7 +28,6 @@ const registerUser = asyncHandler(async (req, res) => {
   // 2. validate the user data - not empty
   // 3. check the user have already a account or not - email, username
   // 4. get the avatar and coverimage, make sure the avatar is uploaded correctly
-  // 5. upload to the cloudinary
   // 6. create user object - create entry in db
   // 7. remove password and refresh token filed from the the response.
   // 8. check for the user creation
@@ -66,6 +65,8 @@ const registerUser = asyncHandler(async (req, res) => {
     role
   });
 
+  const {accessToken, refreshToken} = generateAccessAndRefreshTokens(user._id); 
+   
   // 7.
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
@@ -87,6 +88,7 @@ const registerUser = asyncHandler(async (req, res) => {
     path: '/',           // Available to entire site
     maxAge: 7 * 24 * 60 * 60 * 1000 // 1 week, adjust as needed
   };
+
   // 9.
   // send the created user data as response
   res
