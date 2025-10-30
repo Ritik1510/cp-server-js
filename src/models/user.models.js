@@ -13,6 +13,7 @@ const userSchema = new Schema(
       enum: ["tenant", "manager", "owner", "visitor", "security"],
       required: true,
     },
+    refreshToken: { type: String },
   },
   { timestamps: true }
 );
